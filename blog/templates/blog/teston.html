@@ -1,0 +1,27 @@
+<html>
+    <head>
+    
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+            <form action="/mon formulaire" method="post">
+                <div>
+                    <label for="name">Importer monfichier :</label>
+                    <input type="file" name="upload">
+                    <button type="button"  id="monBouton">Afficher </button><br> 
+                </div>
+                <div>
+                    Quelle Colonne traiter? <br>
+                    <input type="radio"  name="traiter" value="Colonne" id="Colonne">
+                    <label for="Colonne"> :</label><br>
+                </div>
+                <div>
+                        Quelle(s) Colonne(s) sélectionner ? <br>
+                        <input type="checkbox"  name="importer" value="importe" id="import">
+                        <label for="import"> :</label><br>
+                </div>
+                    <input type="submit" value="Envoyer le formulaire">
+            </form>
+    </body>
+
+</html>
