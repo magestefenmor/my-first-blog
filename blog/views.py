@@ -4,16 +4,19 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.views.generic import TemplateView
 from .models import Post 
 from .forms import PostForm
 from django.core.files.storage import FileSystemStorage
 
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 import openpyxl
 from openpyxl import Workbook, load_workbook
+
+import json
 
 
 def post_test(request):
@@ -80,11 +83,28 @@ def handle_uploaded_file(f):
 
 
 def post_columns(request):
+
     if request.method=='POST':
-        uploaded_file= request.FILES['uploade']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
-    return render(request, 'excel.html')  
+        # print(request)
+        uploaded_file= request.FILES['file']
+        fs = FileSystemStorage()
+        fs.save(uploaded_file.name, uploaded_file)
+       
+       # Utiliser OpenPyXL pour manipuler le fichier xls
+        wb = load_workbook(filename=uploaded_file, read_only=True)
+        n=0
+        sheets = wb.sheetnames
+        ws = wb[sheets[n]]
+        #for row in ws.rows:
+          #  print(row[0])
+
+        #colnames = []
+        #col_indices = {n for n, cell in enumerate(ws.rows[0]) if cell.value in colnames}
+        data =[[cell.value for cell in row] for row in ws.rows]
+        y = json.dumps({"items":data[0]})
+
+    return HttpResponse(y, content_type="application/json")
+
 
 
 
