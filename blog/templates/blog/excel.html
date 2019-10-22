@@ -1,0 +1,174 @@
+
+
+
+<html>
+    <head>
+    
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    </head>
+    <body>
+            
+            <form  method="post" enctype="multipart/form-data">
+                <p>
+                    <label for="name">Importer monfichier :</label>
+                    <input type="file" id="fileExcel" name="uploade">
+                    <button type="button"  id="monBouton">Afficher les colonnes</button><br> 
+                </p>
+                <p>
+                    <label for="d'action">Que voulez vous faire?</label>
+                    <select id="Type d'action", name="taitract">
+                            <option selected="selected" id="a" >Traitement</option> 
+                            <option id="b">Extraction</option>
+                    </select>
+                </p>
+
+                <div id="tar">
+                    Quelle Colonne traiter? <br>
+                    <div id="target"></div>
+                <p>
+                    <button type="button" id="tonBouton"> 
+                        regarder 
+                    </button> 
+                    <div id="target2"></div>
+                </p>
+                
+                    <input type="submit" value="Envoyer">
+                    <button type="button">Afficher </button><br> 
+                </div>
+                <p>  
+                <div>
+                        Quelle(s) Colonne(s) sélectionner ? 
+                        <button type="button" id="import">Afficher </button><br> 
+                        <div id="targe"></div>
+                </div>
+                <p> 
+                    <button type="button" id="leBouton"> 
+                    regarder 
+                    </button>
+                </p>  
+                    <div id="targe2"></div>
+                    <input type="submit" value="Envoyer le formulaire">
+                </p> 
+            </form>
+            {% csrf_token %}
+            <script type="text/javascript">
+
+
+                $ ("select") .change (function () {    
+                document.getElementById ("tar") .innerHTML = "Vous avez sélectionné:" + document.getElementById ("Type d'action"). value;  
+                });
+
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                } 
+                    
+                    
+
+                
+
+                $(document).ready(function(){
+
+                    var csrftoken = getCookie('csrftoken');
+                    //alert(csrftoken);
+                    $("#monBouton").click(function(){
+                        var file_data = $("#fileExcel").prop('files')[0];
+                        var upload_data = new FormData();
+                        upload_data.append('file',file_data);
+
+                        $.ajax({
+                            url: '/excel/columns', 
+                            dataType: 'json',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: upload_data,                         
+                            type: 'post',
+                            headers: {"X-CSRFToken": csrftoken},
+                            success: function(server_retour){
+                                console.log(server_retour);
+                                if(server_retour){
+                                    $.each(server_retour.items, function( index, value ) {
+                                        console.log(index+":"+ value);
+                                        var radioBtn = $('<p> <input type="radio" name="rbtnCount" id="'+index+'"  value="'+value+'"/>'+value+' </p>');
+                                        //radioBtn.appendTo('#target');
+                                        $("#target").append(radioBtn);    
+                                    });
+                                }
+                            }
+                        });
+                    }); 
+                    $("#import").click(function(){
+                        var file_data = $("#fileExcel").prop('files')[0];
+                        var upload_data = new FormData();
+                        upload_data.append('file',file_data);
+
+                        $.ajax({
+                            url: '/excel/columns', 
+                            dataType: 'json',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: upload_data,                         
+                            type: 'post',
+                            headers: {"X-CSRFToken": csrftoken},
+                            success: function(server_retour){
+                                console.log(server_retour);
+                                if(server_retour){
+                                    $.each(server_retour.items, function( index, value ) {
+                                        console.log(index+":"+ value);
+                                        var radioBtn = $('<p> <input type="checkbox" name="chbCount" id="'+index+'"  value="'+value+'"/>'+value+' </p>');
+                                        //radioBtn.appendTo('#target');
+                                        $("#targe").append(radioBtn);    
+                                    });
+                                }
+                            }
+                        });
+                    }); 
+                    //$("#leBouton").click(function() {
+                        //var chbCount = [];
+                        //$.each($("input[name='chbCount']:checked"), function() {
+                            //chbCount.push($(this).val());
+                        //});
+                        //alert("les colonnes sélectionnées sont: " + chbCount.join(", "));
+                    //});
+                });
+                    $("#tonBouton").click(function(){
+                        var radioValue = $("input[name='rbtnCount']:checked").val();
+                        if(radioValue){
+                            $("#target2").html(radioValue);
+                        }
+                    });
+
+                    $("#leBouton").click(function(){
+                        //var radioValue = $("input[name='chbCount']:checked");
+                        //console.log('Values :',radioValue);
+                        $.each($("input[name='chbCount']:checked"), function() {
+                            var tempVal = $(this).val();
+                            $("#targe2").append(tempVal);
+                        });
+                        //if(radioValue){
+                        //    $("#targe2").html(radioValue);
+                        //}
+                    });
+
+
+                
+                
+</script>
+            
+    </body>
+
+</html>
